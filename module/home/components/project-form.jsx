@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextAreaAutosize from "react-textarea-autosize";
@@ -12,21 +11,16 @@ import z from "zod";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
-
-type TPromptTemplet = {
-  emoji: string;
-  title: string;
-  prompt: string;
-};
+import { useCreateProject } from "@/module/projects/hooks/project";
 
 const formSchema = z.object({
   content: z
     .string()
     .min(1, "Project description is required")
-    .max(1000, "Project description is too long"),
+    .max(1000, "Description is too long"),
 });
 
-const PROJECT_TEMPLATES: TPromptTemplet[] = [
+const PROJECT_TEMPLATES = [
   {
     emoji: "🎬",
     title: "Build a Netflix clone",
@@ -74,38 +68,49 @@ const PROJECT_TEMPLATES: TPromptTemplet[] = [
     title: "Build a Spotify clone",
     prompt:
       "Build a Spotify-style music player with a sidebar for playlists, a main area for song details, and playback controls. Use local state for managing playback and song selection. Prioritize layout balance and intuitive control placement for a smooth user experience. Use dark mode.",
-  },
+  }
 ];
 
 const ProjectForm = () => {
   const [isFocused, setIsFocused] = useState(false);
+  const router = useRouter();
+  const { mutateAsync, isPending } = useCreateProject();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
     },
+    mode: "onChange",
   });
 
-  const handleTemplate = (prompt: string) => {
+  const handleTemplate = (prompt) => {
     form.setValue("content", prompt);
   };
 
-  const onSubmit = async (values : any) => {
+  const onSubmit = async (values) => {
     try {
-      console.log(values);
-    } catch (error) {}
+      const res = await mutateAsync(values.content);
+      router.push(`/projects/${res.id}`);
+      toast.success("Project created successfully");
+      form.reset();
+    } catch (error) {
+      toast.error(error.message || "Failed to create project");
+    }
   };
+
+  const isButtonDisabled = isPending || !form.watch("content").trim();
 
   return (
     <div className="space-y-8">
-      {/* Template Grid  */}
+      {/* Templates Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {PROJECT_TEMPLATES.map((template, index) => (
           <button
             key={index}
             onClick={() => handleTemplate(template.prompt)}
-            // disabled={isPending}
-            className="group relative p-4 rounded-xl border bg-card hover:bg-accent/50 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md hover:border-primary/30 cursor-pointer"
+            disabled={isPending}
+            className="group relative p-4 rounded-xl border bg-card hover:bg-accent/50 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md hover:border-primary/30"
           >
             <div className="flex flex-col gap-2">
               <span className="text-3xl" role="img" aria-label={template.title}>
@@ -115,12 +120,12 @@ const ProjectForm = () => {
                 {template.title}
               </h3>
             </div>
-            <div className="absolute inset-0 rounded-xl bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
           </button>
         ))}
       </div>
 
-      {/* Divider  */}
+      {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -132,7 +137,7 @@ const ProjectForm = () => {
         </div>
       </div>
 
-      {/* Form  */}
+      {/* Form */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -147,14 +152,15 @@ const ProjectForm = () => {
             render={({ field }) => (
               <TextAreaAutosize
                 {...field}
-                // disabled={isPending}
+                disabled={isPending}
                 placeholder="Describe what you want to create..."
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 minRows={3}
                 maxRows={8}
                 className={cn(
-                  "pt-4 resize-none border-none w-full outline-none bg-transparent"
+                  "pt-4 resize-none border-none w-full outline-none bg-transparent",
+                  isPending && "opacity-50"
                 )}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
@@ -174,17 +180,17 @@ const ProjectForm = () => {
             </div>
             <Button
               className={cn(
-                "size-8 rounded-full"
+                "size-8 rounded-full",
+                isButtonDisabled && "bg-muted-foreground border"
               )}
-              // disabled={isButtonDisabled}
+              disabled={isButtonDisabled}
               type="submit"
             >
-              {/* {isPending ? (
+              {isPending ? (
                 <Loader2Icon className="size-4 animate-spin" />
               ) : (
                 <ArrowUpIcon className="size-4" />
-              )} */}
-              <ArrowUpIcon />
+              )}
             </Button>
           </div>
         </form>

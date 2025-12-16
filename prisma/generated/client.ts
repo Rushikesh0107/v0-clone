@@ -49,3 +49,18 @@ path.join(process.cwd(), "prisma/generated/libquery_engine-darwin-arm64.dylib.no
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
+/**
+ * Model Fragments
+ * 
+ */
+export type Fragments = Prisma.FragmentsModel

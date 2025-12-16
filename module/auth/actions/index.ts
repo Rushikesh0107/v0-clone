@@ -85,10 +85,7 @@ export const getCurrentUser = async () => {
       return null;
     }
 
-    return {
-      success : true,
-      user : dbUser,
-    }
+    return dbUser
 
   } catch (error) {
     console.error("Something went wrong while finding user", error)
