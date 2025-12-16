@@ -1,5 +1,6 @@
 import ProjectForm from "@/module/home/components/project-form";
 import Image from "next/image";
+import ProjectList from "@/module/home/components/project-list"
 
 const Home = () => {
   return (
@@ -16,16 +17,18 @@ const Home = () => {
             />
           </div>
           <h1 className="text-2xl md:text-4xl font-bold text-center">
-            Build something with ❤️
+            Build something with 🤍
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground text-center">
-            Create Apps and websites by chatting with AI
+            Create apps and websites by chatting with AI
           </p>
 
           <div className="max-w-3xl w-full">
             <ProjectForm />
           </div>
+
+          <ProjectList />
         </section>
       </div>
     </div>

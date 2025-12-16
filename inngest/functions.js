@@ -217,9 +217,12 @@ export const codeAgentFunction = inngest.createFunction(
 
     return {
       url: sandboxUrl,
-      title:"Untitled",
+      title:
+        fragmentTitle[0].type === "text"
+          ? fragmentTitle[0].content
+          : "Fragment",
       files: result.state.data.files,
       summary: result.state.data.summary,
-    }
+    };
   } 
 )

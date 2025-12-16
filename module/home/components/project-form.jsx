@@ -103,39 +103,6 @@ const ProjectForm = () => {
 
   return (
     <div className="space-y-8">
-      {/* Templates Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {PROJECT_TEMPLATES.map((template, index) => (
-          <button
-            key={index}
-            onClick={() => handleTemplate(template.prompt)}
-            disabled={isPending}
-            className="group relative p-4 rounded-xl border bg-card hover:bg-accent/50 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md hover:border-primary/30"
-          >
-            <div className="flex flex-col gap-2">
-              <span className="text-3xl" role="img" aria-label={template.title}>
-                {template.emoji}
-              </span>
-              <h3 className="text-sm font-medium group-hover:text-primary transition-colors">
-                {template.title}
-              </h3>
-            </div>
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-          </button>
-        ))}
-      </div>
-
-      {/* Divider */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or describe your own idea
-          </span>
-        </div>
-      </div>
 
       {/* Form */}
       <Form {...form}>
@@ -195,6 +162,40 @@ const ProjectForm = () => {
           </div>
         </form>
       </Form>
+
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or choose something from the below
+          </span>
+        </div>
+      </div>
+
+      {/* Templates Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {PROJECT_TEMPLATES.map((template, index) => (
+          <button
+            key={index}
+            onClick={() => handleTemplate(template.prompt)}
+            disabled={isPending}
+            className="group relative p-4 rounded-xl border bg-card hover:bg-accent/50 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md hover:border-primary/30"
+          >
+            <div className="flex flex-col gap-2">
+              <span className="text-3xl" role="img" aria-label={template.title}>
+                {template.emoji}
+              </span>
+              <h3 className="text-sm font-medium group-hover:text-primary transition-colors">
+                {template.title}
+              </h3>
+            </div>
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
