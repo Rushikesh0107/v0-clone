@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "lib/db.ts", "module/projects/actions/index.js", "module/home/components/project-form.jsx"  ],
+, "lib/db.ts", "module/projects/actions/index.js", "module/home/components/project-form.jsx", "module/projects/components/message-container.jsx", "lib/utils.js", "module/projects/components/project-view.jsx"  ],
   "exclude": ["node_modules"]
 }

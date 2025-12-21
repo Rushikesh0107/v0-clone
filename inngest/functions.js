@@ -50,11 +50,11 @@ export const codeAgentFunction = inngest.createFunction(
         // 1. Terminal
         createTool({
           name:"terminal",
-          desciption:"Use the terminal to run the commmands",
+          desciption:"Use the terminal to run commmands",
           parameters:z.object({
             command:z.string()
           }),
-          handler:async({terminal}, {step}) => {
+          handler:async({command}, {step}) => {
             return await step?.run("terminal ",async() => {
               const buffer = {stdout:"", stderr:""};
 
@@ -83,8 +83,8 @@ export const codeAgentFunction = inngest.createFunction(
 
         // 2. Create Update files.
         createTool({
-          name:"createOrUpadteFiles",
-          description:"Create or update files in the sandbox",
+          name:"createOrUpdateFiles",
+          description:"Create or update files. Use this tool directly without wrapping or explanation.",
           parameters:z.object({
             files:z.array(
               z.object({
@@ -94,13 +94,15 @@ export const codeAgentFunction = inngest.createFunction(
             )
           }),
           handler:async({files}, {step, network}) => {
-            const newFiles = step.run("createOrUpdateFiles", async() => {
+            const newFiles = await step.run("createOrUpdateFiles", async() => {
               try {
-                const updatedFiles = network?.state?.data?.files || {}
+                const updatedFiles = {
+                  ...(network?.state?.data?.files ?? {}),
+                };
                 const sandbox = await Sandbox.connect(sandboxId)
                 for(const file of files){
                   await sandbox.files.write(file.path, file.content);
-                  updatedFiles[file] = file.content;
+                  updatedFiles[file.path] = file.content;
                 }
                 return updatedFiles
               }catch (error){
@@ -109,6 +111,7 @@ export const codeAgentFunction = inngest.createFunction(
             })
             if(typeof newFiles === "object"){
               network.state.data.files = newFiles;
+              return "FILES_UPDATED"
             }
           }
         }),
@@ -217,10 +220,7 @@ export const codeAgentFunction = inngest.createFunction(
 
     return {
       url: sandboxUrl,
-      title:
-        fragmentTitle[0].type === "text"
-          ? fragmentTitle[0].content
-          : "Fragment",
+      title: "Untitled",
       files: result.state.data.files,
       summary: result.state.data.summary,
     };
